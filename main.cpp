@@ -22,6 +22,7 @@ void beep()
 class COM : public olc::PixelGameEngine
 {
 public:
+	wstring map;
 	COM()
 	{
 		sAppName = "3DCOM";
@@ -33,7 +34,7 @@ public:
 
 	virtual bool OnUserCreate()
 	{
-		map += L"#########.......";
+		map += L"................";
 		map += L"#...............";
 		map += L"#.......########";
 		map += L"#..............#";
@@ -234,7 +235,6 @@ private:
 	float PlayerAngle = 0.0f;
 	float FOV = 3.14159f / 4.0f;
 	float fDepth = 16.0f;
-	wstring map;
 	float fSpeed = 5.0f;
 };
 
