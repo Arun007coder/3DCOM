@@ -14,10 +14,12 @@
 
 using namespace std;
 
+#ifndef _WIN32
 void beep()
 {
-	system("sudo sh -c \" echo - e '\a' > /dev/console \"");
+	system("if [ $(whoami) != root ]; then echo \"Cannot use beep because you are not root\"; else echo - e '\a' > /dev/console; fi");
 }
+#endif
 
 class COM : public olc::PixelGameEngine
 {
@@ -205,7 +207,14 @@ public:
 			}
 		}
 
-		//swprintf_s(screen, 40, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", PlayerX, PlayerY, PlayerAngle, 1.0f / fElapsedTime);
+		char* txt;
+		size_t size;
+		olc::vf2d pos = { 0, 0 };
+		olc::vf2d scale = {0.3f, 0.3f};
+		size = snprintf(NULL, 0, "X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", PlayerX, PlayerY, PlayerAngle, 1.0f / fElapsedTime);
+		txt = (char *)malloc(size + 1);
+		snprintf(txt, size + 1, "X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", PlayerX, PlayerY, PlayerAngle, 1.0f / fElapsedTime);
+		DrawStringDecal(pos, txt, olc::YELLOW, scale);
 
 		olc::Pixel Shade = olc::BLACK;
 		for (int nx = 0; nx < nMapWidth; nx++)

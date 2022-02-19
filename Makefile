@@ -8,7 +8,7 @@ RUNNER=$(shell whoami)
 SRC=main.cpp
 
 $(NAME) : $(SRC)
-	$(CXX)  $(CXXFLAGS) -I $(INCLUDEDIR) -o $(NAME) $(SRC)
+	$(CXX) $(SRC) $(CXXFLAGS) -I $(INCLUDEDIR) -o $(NAME)
 
 prepare :
 	@if [ $(RUNNER) != root ] ; \
@@ -19,3 +19,6 @@ prepare :
 		echo "You are root" ; \
 		apt install build-essential libglu1-mesa-dev libpng-dev; \
 	fi
+
+run : $(NAME)
+	sudo ./$(NAME) # To Beep
