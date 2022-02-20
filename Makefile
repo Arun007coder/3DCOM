@@ -21,4 +21,4 @@ prepare :
 	fi
 
 run : $(NAME)
-	sudo ./$(NAME) # To Beep
+	@sudo ./$(NAME) # To Beep

@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <string>
 #include <chrono>
 #include <olcPixelGameEngine.h>
 
@@ -21,10 +22,21 @@ void beep()
 }
 #endif
 
+std::wstring stringToWstring(const std::string &t_str)
+{
+	// setup converter
+	typedef std::codecvt_utf8<wchar_t> convert_type;
+	std::wstring_convert<convert_type, wchar_t> converter;
+
+	// use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
+	return converter.from_bytes(t_str);
+}
+
 class COM : public olc::PixelGameEngine
 {
 public:
 	wstring map;
+	wstring termMap;
 	COM()
 	{
 		sAppName = "3DCOM";
@@ -34,24 +46,84 @@ public:
 
 	}
 
+	bool loadmap(char* filename)
+	{
+		ifstream file(filename);
+
+		if (file.fail())
+		{
+			return false;
+		}
+
+		if (file.is_open())
+		{
+			char c[] = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
+
+			while (file >> c)
+			{
+				termMap += stringToWstring(c) + L"\n";
+				map += stringToWstring(c);
+			}
+			file.close();
+			return true;
+		}
+
+		if (map.length() == 0)
+		{
+			return false;
+		}
+	}
+
 	virtual bool OnUserCreate()
 	{
-		map += L"................";
-		map += L"#...............";
-		map += L"#.......########";
-		map += L"#..............#";
-		map += L"#......###.....#";
-		map += L"#......###.....#";
-		map += L"#..............#";
-		map += L"###............#";
-		map += L"##.............#";
-		map += L"#......####..###";
-		map += L"#......#.......#";
-		map += L"#......#.......#";
-		map += L"#..............#";
-		map += L"#......#########";
-		map += L"#..............#";
-		map += L"################";
+		if (!loadmap("map.txt"))
+		{
+			cout << "Failed to load map" << endl;
+			cout << "Loading default map" << endl;
+
+			map += L"################";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"#..............#";
+			map += L"################";
+
+			termMap += L"################\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"#..............#\n";
+			termMap += L"################\n";
+		}
+		cout << "map loaded" << endl;
+		cout << "map size: " << map.size() << endl;
+		cout << "Player starting X  position: " << PlayerX  << endl;
+		cout << "Player starting Y  position: " << PlayerY  << endl;
+		cout << "Player FOV: " << FOV << endl;
+		cout << "Map resolution: " << nMapWidth << "x" << nMapHeight << endl;
+		cout << "map: " << endl;
+		wcout << termMap;
+
 		return true;
 	}
 
@@ -181,7 +253,7 @@ public:
 				nShade = olc::BLACK;
 
 			if (bBoundary)
-				nShade = ' ';
+				nShade = olc::BLACK;
 
 			for (int y = 0; y < nScreenHeight; y++)
 			{
@@ -221,17 +293,14 @@ public:
 			for (int ny = 0; ny < nMapWidth; ny++)
 			{
 				if (map[ny * nMapWidth + nx] == '#')
-					Shade = olc::DARK_GREY;
+					Draw(nx + 1, ny + 1, olc::DARK_GREY);
 				else if (map[ny * nMapWidth + nx] == '.')
-					Shade = olc::VERY_DARK_GREY;
-				Draw(nx + 1, ny + 1, Shade);
+					Draw(nx + 1, ny + 1, olc::VERY_DARK_GREY);
 			}
 		Draw((int)PlayerX + 1, (int)PlayerY + 1, olc::BLUE);
 
-		//screen[nScreenWidth * nScreenHeight - 1] = '\0';
-
 		return true;
-	}
+}
 
 private:
 	int nScreenWidth = 120;
