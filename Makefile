@@ -4,11 +4,16 @@ BASEDIR=$(PWD)
 INCLUDEDIR=$(BASEDIR)/Include
 NAME=3DCOM
 RUNNER=$(shell whoami)
+GDB=gdb
 
 SRC=main.cpp
 
 $(NAME) : $(SRC)
 	$(CXX) $(SRC) $(CXXFLAGS) -I $(INCLUDEDIR) -o $(NAME)
+
+Debug : $(NAME)
+	$(CXX) $(SRC) $(CXXFLAGS) -I $(INCLUDEDIR) -g -o $(NAME)
+	$(GDB) $(NAME)
 
 prepare :
 	@if [ $(RUNNER) != root ] ; \
@@ -22,3 +27,6 @@ prepare :
 
 run : $(NAME)
 	@sudo ./$(NAME) # To Beep
+
+clean :
+	rm -f $(NAME)

@@ -1,0 +1,9 @@
+PlayerX = 10.2
+PlayerY = 8.3
+Player angle = 5.7
+speed = 5
+map = map.txt
+Control = WASD
+Boundary = true
+Beep = true
+Debug = true
